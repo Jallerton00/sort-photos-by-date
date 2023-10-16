@@ -2,7 +2,7 @@
 
 A script to move files based on creation date, heavily based on https://www.geeksforgeeks.org/python-move-files-to-creation-and-modification-date-named-directories/
 
-This was modified to be more useful for me to sort my photos from Google Takeout - it removes the json metadata files as we go as I've already used [google-photos-takeout-helper](https://pypi.org/project/google-photos-takeout-helper/) to reattach the metadata.
+This was modified to be more useful for me to sort my photos from Google Takeout - it removes the json metadata files as we go as I've already used [google-photos-takeout-helper](https://github.com/TheLastGimbus/GooglePhotosTakeoutHelper/) to reattach the metadata.
 
 I found the flattening function to be a bit annoying in Python, so I settled on a couple of shell commands:
 ```
