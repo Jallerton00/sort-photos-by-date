@@ -23,25 +23,29 @@ listOfPartnerUploads = []
 
 for jsonFile in listOfJsonFilesIterator:
     if "metadata" not in jsonFile:
-        #print(jsonFile)
         jsonContents = json.load(open(jsonFile))
-        photoTaken = jsonContents.get("photoTakenTime", "Unknown")
-        if photoTaken == "Unknown":
-            timestamp = partnerUploadKeepFrom #if don't know, keep it
-        else:
-            timestamp = datetime.strptime(photoTaken["formatted"].replace("Sept","Sep"), "%d %b %Y, %H:%M:%S %Z")
-        if (jsonContents.get("googlePhotosOrigin","NA") == {"fromPartnerSharing":{}}) and (partnerUploadKeepFrom > timestamp):
-            photoFilename = jsonFile.replace(".json","")
-            listOfPartnerUploads.append(photoFilename)
-            if os.path.exists(photoFilename):
-                os.remove(photoFilename)
-                os.remove(jsonFile)
+        if jsonContents != {}:
+            photoFilename = jsonContents["title"]
+            photoTaken = jsonContents.get("photoTakenTime", "Unknown")
+            if photoTaken == "Unknown":
+                timestamp = partnerUploadKeepFrom #if don't know, keep it
             else:
-                print("File could not be found: " + photoFilename)
+                timestamp = datetime.strptime(photoTaken["formatted"].replace("Sept","Sep"), "%d %b %Y, %H:%M:%S %Z")
+            if (jsonContents.get("googlePhotosOrigin","NA") == {"fromPartnerSharing":{}}) and (partnerUploadKeepFrom > timestamp):
+                photoPath = re.sub(r'/.*', '/', jsonFile)
+                fullPhotoPath = photoPath + photoFilename
+                #fullPhotoPath=fullPhotoPath.replace("'","_")
+                if (fullPhotoPath + ".json" == jsonFile):
+                    print(fullPhotoPath)
+                    listOfPartnerUploads.append(fullPhotoPath)
+                    os.remove(fullPhotoPath)
+                    os.remove(jsonFile)
+                else:
+                    print("json and photo don't match... " + fullPhotoPath + " " + jsonFile)
 
 partnerUploadsOutput = open("partnerUploads","w")
 
 for filename in listOfPartnerUploads:
-    partnerUploadsOutput.write(filename + "\n")
+    partnerUploadsOutput.write(re.sub('Photos from [0-9]*/', '', filename) + "\n")
 
 partnerUploadsOutput.close()
